@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Niveau 1</title>
+</head>
+<body>
+    <h1>Ouvrir la porte</h1>
+    <p>
+        Pas besoin de clé pour ouvrir une porte
+    <p/>
+    <form id="login-form" action="niveau1.json" method="POST">
+        <label for="username">Nom d'utilisateur:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Mot de passe:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">Se connecter</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        document.getElementById("login-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "niveau1.json", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = function() {
+                const response = JSON.parse(xhr.responseText);
+                document.getElementById("response").innerHTML = response.message;
+            };
+            xhr.send(JSON.stringify({ username: username, password: password }));
+        });
+    </script>
+</body>
+</html>
