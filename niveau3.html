@@ -11,5 +11,43 @@
     <h1>Niveau 3</h1>
     <p>Félicitations !</p>
 
+    <!-- Formulaire de mot de passe -->
+    <form id="password-form">
+        <label for="password">Mot de passe :</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">Valider</button>
+    </form>
+
+    <div id="response" style="margin-top: 20px; color: red;"></div>
+
+    <!-- Script pour vérifier le mot de passe -->
+    <script>
+        document.getElementById("password-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Empêcher le rechargement de la page
+
+            // Récupération du mot de passe saisi
+            const enteredPassword = document.getElementById("password").value;
+
+            // Envoi d'une requête au fichier JSON contenant le mot de passe correct
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", "niveau3.json", true);
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText);
+
+                    // Vérification du mot de passe saisi
+                    if (enteredPassword === response.password) {
+                        alert("Félicitations ! Vous avez trouvé le mot de passe !");
+                        window.location.href = "niveau4.html"; // Redirection vers le niveau suivant
+                    } else {
+                        document.getElementById("response").innerHTML = "Mot de passe incorrect. Essayez encore.";
+                    }
+                } else {
+                    document.getElementById("response").innerHTML = "Erreur de connexion au serveur.";
+                }
+            };
+            xhr.send();
+        });
+    </script>
 </body>
 </html>
