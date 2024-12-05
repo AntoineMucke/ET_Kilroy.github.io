@@ -1,0 +1,28 @@
+self.addEventListener("message", function(event) {
+    const request = JSON.parse(event.data); // Données envoyées par le formulaire
+    const db = [
+        { username: "admin", password: "admin123" },
+        { username: "user", password: "user123" }
+    ]; // Simuler une base de données
+
+    let success = false;
+    let message = "Identifiants invalides. Essayez encore.";
+
+    // Vérification normale
+    for (const user of db) {
+        if (request.username === user.username && request.password === user.password) {
+            success = true;
+            message = "Connexion réussie !";
+            break;
+        }
+    }
+
+    // Simuler une injection SQL
+    if (request.username.includes("'") || request.password.includes("'")) {
+        success = true; // Injection SQL contourne la vérification
+        message = "Félicitations ! Vous avez contourné la connexion.";
+    }
+
+    // Retourner la réponse
+    self.postMessage(JSON.stringify({ success: success, message: message }));
+});
