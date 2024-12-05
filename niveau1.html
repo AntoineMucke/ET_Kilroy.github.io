@@ -41,8 +41,6 @@
             // Simulation de la requête SQL vulnérable
             let query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
 
-            console.log("Requête exécutée :", query); // Pour le débogage
-
             // Vérification des identifiants classiques
             for (const user of database) {
                 if (username === user.username && password === user.password) {
@@ -73,7 +71,7 @@
             const success = authenticate(username, password, database);
 
             if (success) {
-                alert("Félicitations ! Vous avez contourné la connexion.");
+                alert("Serrure crocheté, t'es un vrai bandit toi");
                 window.location.href = "niveau2.html"; // Redirection vers le niveau suivant
             } else {
                 document.getElementById("response").textContent = "Identifiants invalides. Essayez encore.";
