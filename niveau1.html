@@ -23,38 +23,73 @@
 
     <div id="response" style="margin-top: 20px; color: red;"></div>
 
-    <!-- Script pour gérer la validation -->
+    <!-- Formulaire de connexion -->
+    <form id="login-form">
+        <label for="username">Nom d'utilisateur :</label>
+        <input type="text" id="username" name="username" required><br><br>
+
+        <label for="password">Mot de passe :</label>
+        <input type="password" id="password" name="password" required><br><br>
+
+        <button type="submit">Se connecter</button>
+    </form>
+
+    <div id="response" style="margin-top: 20px; color: red;"></div>
+
     <script>
-        document.getElementById("login-form").addEventListener("submit", function(event) {
+        // Charger les identifiants depuis un fichier JSON
+        async function loadDatabase() {
+            try {
+                const response = await fetch("database.json");
+                return await response.json(); // Retourne les données sous forme d'objet JavaScript
+            } catch (error) {
+                console.error("Erreur de chargement de la base de données :", error);
+                return []; // Retourne une base vide en cas d'erreur
+            }
+        }
+
+        // Fonction qui simule une requête SQL vulnérable
+        function authenticate(username, password, database) {
+            // Simulation de la requête SQL vulnérable
+            let query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
+
+            console.log("Requête exécutée :", query); // Pour le débogage
+
+            // Vérification des identifiants classiques
+            for (const user of database) {
+                if (username === user.username && password === user.password) {
+                    return true;
+                }
+            }
+
+            // Comportement vulnérable (Injection SQL réussie)
+            if (query.includes("' OR 1=1 --")) {
+                return true;
+            }
+
+            return false; // Échec de l'authentification
+        }
+
+        // Gestion de la soumission du formulaire
+        document.getElementById("login-form").addEventListener("submit", async function (event) {
             event.preventDefault(); // Empêcher le rechargement de la page
 
-            // Récupération des valeurs saisies
+            // Charger la base de données
+            const database = await loadDatabase();
+
+            // Récupérer les valeurs saisies
             const username = document.getElementById("username").value;
             const password = document.getElementById("password").value;
 
-            // Envoi de la requête fictive au fichier JSON
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", "niveau1.json", true);
-            xhr.setRequestHeader("Content-Type", "application/json");
+            // Appeler la fonction d'authentification
+            const success = authenticate(username, password, database);
 
-            xhr.onload = function() {
-                // Analyse de la réponse
-                const response = JSON.parse(xhr.responseText);
-
-                if (response.success) {
-                    alert("Félicitations ! Vous avez contourné la connexion.");
-                    // Stockage d'une variable pour la progression (facultatif)
-                    sessionStorage.setItem("niveau1Termine", "true");
-                    // Redirection vers le niveau 2
-                    window.location.href = "niveau2.html";
-                } else {
-                    // Affichage du message d'erreur
-                    document.getElementById("response").innerHTML = response.message;
-                }
-            };
-
-            // Envoi des données sous forme JSON
-            xhr.send(JSON.stringify({ username: username, password: password }));
+            if (success) {
+                alert("Félicitations ! Vous avez contourné la connexion.");
+                window.location.href = "niveau2.html"; // Redirection vers le niveau suivant
+            } else {
+                document.getElementById("response").textContent = "Identifiants invalides. Essayez encore.";
+            }
         });
     </script>
 </body>
