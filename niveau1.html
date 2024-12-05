@@ -41,7 +41,7 @@
         // Charger les identifiants depuis un fichier JSON
         async function loadDatabase() {
             try {
-                const response = await fetch("database.json");
+                const response = await fetch("niveau1.json");
                 return await response.json(); // Retourne les données sous forme d'objet JavaScript
             } catch (error) {
                 console.error("Erreur de chargement de la base de données :", error);
